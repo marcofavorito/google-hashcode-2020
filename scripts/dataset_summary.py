@@ -22,9 +22,6 @@ if __name__ == '__main__':
     print("Avg signup day period: {}".format(np.mean(list(map(lambda l: l.nb_signup_days, input_.libraries)))))
     print("Std signup day period: {}".format(np.std(list(map(lambda l: l.nb_signup_days, input_.libraries)))))
 
-    print("Avg Rate time: {}".format(np.mean(input_.scores)))
-    print("Std Rate time: {}".format(np.std(input_.scores)))
-
     print("Avg Book score: {}".format(np.mean(input_.scores)))
     print("Std Book score: {}".format(np.std(input_.scores)))
 
