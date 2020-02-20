@@ -24,7 +24,7 @@ if __name__ == '__main__':
     print("Std Books per Library: {}".format(np.std([len(l.books) for l in input_.libraries])))
 
     print("Avg Score per Library: {}".format(np.mean([_score_book_list(l.books, input_.scores) for l in input_.libraries])))
-    print("Std Score per Library: {}".format(np.mean([_score_book_list(l.books, input_.scores) for l in input_.libraries])))
+    print("Std Score per Library: {}".format(np.std([_score_book_list(l.books, input_.scores) for l in input_.libraries])))
 
     print("Avg Shipping rate: {}".format(np.mean(list(map(lambda l: l.ship_book_rate, input_.libraries)))))
     print("Std Shipping rate: {}".format(np.std(list(map(lambda l: l.ship_book_rate, input_.libraries)))))
