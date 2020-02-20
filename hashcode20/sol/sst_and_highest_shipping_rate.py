@@ -5,7 +5,7 @@ from hashcode20.helpers import Input, Output
 
 
 def main(i: Input) -> Output:
-    """naive: take order as the order of appearance"""
+    """shortest signing time and higher shipping book rate"""
     libraries_sorted = sorted(i.libraries, key=lambda library: (library.nb_signup_days, -library.ship_book_rate))
     library_order = list(map(lambda l: l.library_id, libraries_sorted))
     book_order_per_library = [list(l.books) for l in libraries_sorted]
