@@ -1,21 +1,21 @@
 #!/usr/bin/env bash
 
-if [ "$#" -ne 1 ] && [ "$#" -ne 5 ]; then
+if [ "$#" -ne 1 ] && [ "$#" -ne 6 ]; then
     echo "Illegal number of parameters.";
     echo "Usage: $0 [ ALG | ALG_A ALG_B ALG_C ALG_D ALG_E ]";
     exit 1;
 fi
 
 if [ "$#" == 1 ]; then
-    ALGS=("$1" "$1" "$1" "$1" "$1");
+    ALGS=("$1" "$1" "$1" "$1" "$1" "$1");
 else
-    ALGS=("$1" "$2" "$3" "$4" "$5");
+    ALGS=("$1" "$2" "$3" "$4" "$5" "$6");
 fi
 
 count=0
 echo "$(date)" >  SUBMISSION
 echo "Algorithms used for the submission:" >> SUBMISSION
-for input in data/[a_,b_,c_,d_,e_]*.in;
+for input in data/[a_,b_,c_,d_,e_,f_]*.txt;
 do
     test_name=$(echo $input | cut -d'/' -f 2 | cut -d'.' -f 1)
     echo "- $test_name: ${ALGS[$count]}" >&1 | tee -a SUBMISSION
@@ -34,9 +34,9 @@ echo "Zipping the solution..."
 
 echo "The scores are:" >&1 | tee -a SUBMISSION;
 total_score=0;
-for f in $(find ./data/*.in  -printf "%f\n" | cut -d'.' -f1);
+for f in $(find ./data/*.txt  -printf "%f\n" | cut -d'.' -f1);
 do
-    partial_score=$(./scripts/scorer --in data/$f.in --solution out/$f.out)
+    partial_score=$(./scripts/scorer --in data/$f.txt --solution out/$f.out)
     total_score=$(echo "$total_score + $partial_score" | bc)
     echo "- $f: $partial_score" >&1 | tee -a SUBMISSION
 done

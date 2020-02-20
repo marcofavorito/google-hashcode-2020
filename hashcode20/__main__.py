@@ -30,7 +30,7 @@ def main():
     logger.debug("Chosen algorithm: {}".format(args.alg))
     input_ = Input.read(args.in_file)  # type: Input
     output = solution.main(input_)  # type: Output
-    logger.debug("Score of the solution: {}".format(score(output)))
+    logger.debug("Score of the solution: {}".format(score(input_, output)))
     output.write(args.out_file)
 
 
