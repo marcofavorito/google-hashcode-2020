@@ -154,6 +154,8 @@ class ShippingBookTask(Task):
             self.simulator.ship_book(book_id)
             self.last_book_idx_processed = idx_to_process
 
+    def done(self) -> bool:
+        return self.last_book_idx_processed >= len(self.book_order)
 
 class Simulator:
 
@@ -170,6 +172,8 @@ class Simulator:
         self.reset()
         for days in range(self.input.nb_days):
             self.step()
+            if self.current_signing_task is None and len(self.current_shipping_tasks) == 0:
+                break
         return self.score
 
     def reset(self):
