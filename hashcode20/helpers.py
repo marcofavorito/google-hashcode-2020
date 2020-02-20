@@ -119,18 +119,18 @@ class Task:
 
 class SigningTask(Task):
 
-    def __init__(self, simulator: 'Simulator', library: Library, current_signing_day: int):
+    def __init__(self, simulator: 'Simulator', library: Library):
         self.library_to_sign_up = library
         self.simulator = simulator
 
-        self.current_signing_day = current_signing_day
+        self.current_signing_day = 0
 
     def step(self) -> 'Task':
         self.current_signing_day += 1
 
     def done(self):
         # we count from zero :-)
-        return self.current_signing_day >= self.library_to_sign_up.nb_signup_days - 1
+        return self.current_signing_day > self.library_to_sign_up.nb_signup_days - 1
 
 
 class ShippingBookTask(Task):
@@ -161,15 +161,8 @@ class Simulator:
         self.input = input
         self.output = output
 
-        self.score = 0
-        self.day = -1
 
-        self.last_scheduled_library_index = -1
-        self.current_signing_task = None  # type: Optional[SigningTask]
-        self.next_signing_task = None  # type: Optional[SigningTask]
-
-        self.current_shipping_tasks = []  # type: List[ShippingBookTask]
-        self.next_shipping_tasks = []  # type: List[ShippingBookTask]
+        self.reset()
 
         self.already_shipped_books = set()  # type: Set[int]
 
@@ -181,13 +174,14 @@ class Simulator:
 
     def reset(self):
         self.score = 0
+        self.day = -1
         self.current_signing_task = None
 
         # schedule the first sign up process - if any
         if len(self.output.library_order_for_signup_process) > 0:
             next_library_id = self.output.library_order_for_signup_process[0]
             next_library = self.input.libraries[next_library_id]
-            self.next_signing_task = SigningTask(self, next_library, 0)
+            self.next_signing_task = SigningTask(self, next_library)
             self.last_scheduled_library_index = 0
         else:
             self.last_scheduled_library_index = -1
@@ -199,6 +193,7 @@ class Simulator:
 
     def step(self):
         """Do a simulation step, and schedule tasks for the next days"""
+        self.day += 1
         self.current_signing_task = self.next_signing_task
         self.next_signing_task = None
         self.current_shipping_tasks = self.next_shipping_tasks
@@ -207,25 +202,31 @@ class Simulator:
         # signing process
         if self.current_signing_task is not None:
             self.current_signing_task.step()
-            if self.current_signing_task.done():
-                # schedule next and schedule ship book
+            if not self.current_signing_task.done():
+                self.next_signing_task = self.current_signing_task
+            else:
+                # schedule next signing task and schedule ship book task
+                current_index = self.last_scheduled_library_index
                 self.last_scheduled_library_index += 1
                 self.next_signing_task = self._get_next_signing_task_if_any(self.last_scheduled_library_index)
 
                 signed_library = self.current_signing_task.library_to_sign_up
                 shipping_task = ShippingBookTask(self,
                                                  signed_library,
-                                                 self.output.books_order_per_library[self.last_scheduled_library_index])
+                                                 self.output.books_order_per_library[current_index])
                 self.next_shipping_tasks.append(shipping_task)
+
 
         for shipping_task in self.current_shipping_tasks:
             shipping_task.step()
+            if not shipping_task.done():
+                self.next_shipping_tasks.append(shipping_task)
 
     def _get_next_signing_task_if_any(self, library_idx: int) -> Optional[SigningTask]:
         if library_idx < len(self.output.library_order_for_signup_process):
             library_id = self.output.library_order_for_signup_process[library_idx]
             library = self.input.libraries[library_id]
-            return SigningTask(self, library, 0)
+            return SigningTask(self, library)
         else:
             return None
 

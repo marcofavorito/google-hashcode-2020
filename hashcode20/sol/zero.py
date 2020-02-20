@@ -5,6 +5,5 @@ from hashcode20.helpers import Input, Output
 
 
 def main(i: Input) -> Output:
-    """naive"""
     return Output([], [])
 
