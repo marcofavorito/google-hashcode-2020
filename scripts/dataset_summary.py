@@ -14,7 +14,8 @@ if __name__ == '__main__':
     input_ = Input.read(args.in_file)  # type: Input
 
     print("# Libraries: {}".format(len(input_.libraries)))
-    print("# Book: {}".format(len(input_.libraries)))
+    print("# Book: {}".format(input_.nb_books))
+    print("# Days: {}".format(input_.nb_days))
 
     print("Avg Shipping rate: {}".format(np.mean(list(map(lambda l: l.ship_book_rate, input_.libraries)))))
     print("Std Shipping rate: {}".format(np.std(list(map(lambda l: l.ship_book_rate, input_.libraries)))))
